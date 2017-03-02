@@ -38,14 +38,17 @@ class FitFile(object):
         self._processor = data_processor or FitFileDataProcessor()
         self._files = [0]
 
-        while self._files[-1] <= self._file_size:            
+        while self._files[-1] <= self._file_size:    
             pos = self._parse_file_header()
+            
             if self._files[-1]+pos == self._file_size:
                 break
             self._file.seek(self._files[-1]+pos)
             self._files.append(self._files[-1]+pos)
-        
-        self.select_fit_subfile(0)
+            
+        for i in range(len(self._files)):
+            self.select_fit_subfile(i)
+            self.parse()
             
 
     ##########
@@ -53,7 +56,6 @@ class FitFile(object):
 
     def select_fit_subfile(self,pos=0):
         self._crc=0
-        print("selecting pos ",self._files[pos])
         if self._files[pos]:
             self._file.seek(self._files[pos],0) 
         else:
